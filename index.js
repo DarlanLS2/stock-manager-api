@@ -1,7 +1,7 @@
-const express = require("express"); // para usar express
+import express from "express"; // Usando import em vez de require
+import usuario from "./src/usuario.json" assert { type: "json" }; // Importando JSON
+import produto from "./src/produto.json" assert { type: "json" }; // Importando JSON
 const server = express(); // para criar um servidor
-const usuario = require("./src/usuario.json");  // para pegar o json e transformar em variavel
-const produto = require("./src/produto.json");  // para pegar o json e transformar em variavel
 const sapo =                                                    
     "⬛⬛⬛⬛⬛🟩🟩⬛🟩🟩⬛⬛⬛\n"+
     "⬛⬛⬛⬛🟩🟩🟩🟩🟩🟩🟩⬛⬛\n"+ 
