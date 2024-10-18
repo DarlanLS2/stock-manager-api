@@ -1,6 +1,5 @@
 import express from "express"; 
-import mysql from "mysql2";
-import conexao from "./conexao_com_mysql2.js"; // Importa a conexão com o banco 
+import {Usuario, Produto} from "./banco_de_dados/conexao_com_sequelize.js" 
 import path from "path"; // Importa o módulo path
 
 const __dirname = path.resolve(); // Define __dirname corretamente
@@ -16,40 +15,85 @@ const sapo =
     "⬛⬛🟩🟩🟩🟩🟫🟫🟫🟫⬛⬛⬛\n" +
     "⬛⬛🟩🟩🟩🟩🟩🟩🟩⬛⬛⬛⬛\n";
 
-// API que retorna um sapo
+// Rota que retorna um sapo
 server.get("/", (req, res) => {
     return res.send("<pre>" + sapo + "</pre>");
 });
 
-// API que retorna o JSON da tabela usuario
+// Rota que retorna o JSON da tabela usuario
 server.get("/usuario", (req, res) => {
-    conexao.query("SELECT * FROM usuario", (err, resultado) => {
-        res.json(resultado);
-    });
+    Usuario.findAll()
+      .then(dados => {
+        res.json(dados)
+      })
+      .catch(erro => {
+        console.log("erro ao pegar ususarios: ", erro);
+      })
 });
 
-// API que retorna o JSON da tabela produto
+// Rota que retorna o JSON da tabela produto
 server.get("/produto", (req, res) => {
-    conexao.query("SELECT * FROM produto", (err, resultado) => {
-        res.json(resultado);
-    });
+    Produto.findAll()
+      .then(dados => {
+        res.json(dados);
+      })
+      .catch(erro => {
+        console.log("erro ao pegar produtos: ", erro)
+      })
 });
 
-// API que retorna o produto com ID digitado na URL
+// Rota que retorna o produto com ID digitado na URL
 server.get("/consulta/:id", (req, res) => {
-    const id = req.params.id;
-    conexao.query(`SELECT * FROM produto WHERE id = ${id}`, (err, resultado) => {
-        res.json(resultado);
-    });
+    let idDigitado = req.params.id;
+    Produto.findOne({ where: {id: idDigitado}})
+      .then(dados => {
+        res.json(dados);
+      })
+      .catch(erro => {
+        console.log("erro ao achar o produto com id")
+      })
 });
 
-// API que envia o arquivo HTML
+// Rota que envia o arquivo HTML
 server.get("/html", (req, res) => {
     res.sendFile(path.join(__dirname, "html", "index.html")); // Usa path.join para construir o caminho
 });
 
 // Inicia o server na porta 3030
 server.listen(3000, () => {
+    console.log("------------------------")
     console.log("PORTA: 3000");
+    console.log("------------------------")
     console.log("Conexão com o server: ok");
+    console.log("------------------------")
 });
+
+//EXEMPLO DE INSERT:
+// Usuario.create({
+//     nome: 'João',
+//     email: 'joao@example.com',
+//     idade: 25
+//   }).then(usuario => {
+//     console.log('Usuário criado:', usuario);
+//   }).catch(error => {
+//     console.log('Erro ao criar usuário:', error);
+//   });
+
+//EXEMPLO DE UPDATE:
+// Usuario.update(
+//     { idade: 26 }, // Dados a serem atualizados
+//     { where: { id: 1 } } // Condição para encontrar o registro
+//   ).then(result => {
+//     console.log('Registros atualizados:', result);
+//   }).catch(error => {
+//     console.log('Erro ao atualizar:', error);
+//   });
+
+//EXEMPLO DE DELETE:
+// Usuario.destroy({
+//     where: { id: 1 } // Condição para encontrar o registro a ser deletado
+//   }).then(() => {
+//     console.log('Usuário deletado');
+//   }).catch(error => {
+//     console.log('Erro ao deletar:', error);
+//   });
