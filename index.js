@@ -17,10 +17,32 @@ const sapo =
 
 // Rota que retorna um sapo
 server.get("/", (req, res) => {
-    return res.send("<pre>" + sapo + "</pre>");
+  return res.send("<pre>" + sapo + "</pre>");
 });
 
-// Rota que retorna o JSON da tabela usuario
+/**************************
+ * AFONSO OLHA ESTA PARTE *
+ **************************/
+
+server.get("/usuario/:nome/:email/:senha", (req, res) => {
+    res.send({
+      nome: req.params.nome,
+      email: req.params.email,
+      senha: req.params.senha,
+    })
+});
+
+server.get("/produto/:nome/:preco/:quantidade/:descricao", (req, res) => {
+    res.send({
+      nome: req.params.nome,
+      preco: req.params.preco,
+      quantidade: req.params.quantidade,
+      descricao: req.params.descricao
+    })
+});
+
+
+    // Rota que retorna o JSON da tabela usuario
 server.get("/usuario", (req, res) => {
     Usuario.findAll()
       .then(dados => {
