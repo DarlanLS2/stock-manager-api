@@ -16,21 +16,6 @@ conexaoSequelize.authenticate()
     console.error('Conexão com banco: erro');
   });
 
-// Cria o model ususario
-const Usuario = conexaoSequelize.define( "usuario", {
-    nome: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    email: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    senha: {
-        type: DataTypes.STRING,
-        allowNull: false
-    }
-})
 
 // Cria o model produto
 const Produto = conexaoSequelize.define( "produto", {
@@ -52,8 +37,8 @@ const Produto = conexaoSequelize.define( "produto", {
     }
 })
 
-// Usuario.sync({ force: true }); // roda este codigo so uma vez se nao vai ficar criando novas tabelas 
+
 // Produto.sync({ force: true }); // roda este codigo so uma vez se nao vai ficar criando novas tabelas 
 
 // exportando os models das tabelas
-export {Usuario, Produto};
+export {Produto};
