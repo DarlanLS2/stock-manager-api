@@ -7,7 +7,7 @@ const __dirname = path.resolve(); // Define __dirname corretamente
 const server = express(); // Instância do express
 
 server.use(cors());
-
+server.use(express.json());
 
 class ProductApi {
   constructor() {
@@ -75,7 +75,7 @@ class ProductApi {
   }
 
   async setupRouteRegisterProduct() {
-    server.post("/product/:nome/:preco/:quantidade/:descricao", async (req, res) => {
+    server.post("/product", async (req, res) => {
       await this.handleRegisterProduct(req, res);
     });
   }
@@ -91,49 +91,42 @@ class ProductApi {
 
   async registerProduct(req) {
     let isCreated = await Product.create({
-      nome: req.params.nome,
-      preco: req.params.preco,
-      quantidade: req.params.quantidade,
-      descricao: req.params.descricao,
+      nome: req.body.name,
+      preco: req.body.price,
+      quantidade: req.body.quantity,
+      descricao: req.body.description
     });
+
     if (!isCreated) {
-      throw new Eror("Erro ao cadastrar produto");
+      throw new Error("Erro ao cadastrar produto");
     }
   }
 
   async setupRouteUpdateProduct() {
-    server.put("/update/:id/:name/:price/:quantity/:description", async (req, res) => {
+    server.put("/product", async (req, res) => {
       await this.handleUpdateProdut(req, res);
     })
   }
 
   async handleUpdateProdut(req, res) {
     try {
-      let productId = req.params.id;
-      let newProcuctData = {
-        name: req.params.name,
-        price: req.params.price,
-        quantity: req.params.quantity,
-        description: req.params.description
-      };
-
-      await this.updateProduct(productId, newProcuctData);
+      await this.updateProduct(req);
       res.status(200).send({message: "Product atualizado com sucesso"})
     } catch (err) {
       res.status(500).send({erro: err})
     }
   }
 
-  async updateProduct(productId, newProductData) {
+  async updateProduct(req) {
     try {
       await Product.update(
         {
-          nome: newProductData.name,
-          preco: newProductData.price,
-          quantidade: newProductData.quantity,
-          descricao: newProductData.description
+          nome: req.body.name,
+          preco: req.body.price,
+          quantidade: req.body.quantity,
+          descricao: req.body.description
         },
-        { where: { id: productId } }
+        { where: { id: req.body.id } }
       )
     } catch (err) {
       throw new Error("Erro ao atualizar Produto")
