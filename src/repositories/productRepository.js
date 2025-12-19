@@ -7,7 +7,7 @@ export class ProductRepository {
     try {
       return await this.Product.findAll();
     } catch {
-      throw new Error("Erro na requisição do findAll()");
+      throw new Error("Erro ao acessar o banco");
     }
   }
 
@@ -15,26 +15,26 @@ export class ProductRepository {
     try{
       return await this.Product.findOne({ where: {id: id}});
     } catch {
-      throw new Error("Erro na requisição findOne()");
+      throw new Error("Erro ao acessar o banco");
     }
   }
   
   async register(infos) {
-    let isCreated = await this.Product.create({
-      nome: infos.name,
-      preco: infos.price,
-      quantidade: infos.quantity,
-      descricao: infos.description
-    });
-
-    if (!isCreated) {
-      throw new Error("Erro na requisição create()");
+    try {
+      return await this.Product.create({
+        nome: infos.name,
+        preco: infos.price,
+        quantidade: infos.quantity,
+        descricao: infos.description
+      });
+    } catch {
+      throw new Error("Erro ao acessar o banco");
     }
   }
 
   async update(infos) {
     try {
-      await this.Product.update(
+      return await this.Product.update(
         {
           nome: infos.name,
           preco: infos.price,
@@ -44,15 +44,15 @@ export class ProductRepository {
         { where: { id: infos.id } }
       )
     } catch {
-      throw new Error("Erro na requisição update()")
+      throw new Error("Erro ao acessar o banco")
     }
   }
 
   async delete(id) {
-    let isDeleted = await this.Product.destroy({where: {id: id}})
-
-    if (isDeleted == 0) {
-      throw new Error("Erro na requisição destroy()");
+    try {
+      return await this.Product.destroy({where: {id: id}})
+    } catch {
+      throw new Error("Erro ao acessar o banco")
     }
   }
 }

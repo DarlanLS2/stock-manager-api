@@ -3,11 +3,25 @@ export class ProductService {
     this.repository = productRepository;
   }
   async getAll() {
-    return await this.repository.getAll();
+    try {
+      const res = await this.repository.getAll();
+
+      if (res.length < 1) {
+        throw new Error("Não há produtos")
+      }
+
+      return res
+    } catch (err) {
+      if (err.message == "Não há produtos") {
+        throw err
+      }
+
+      throw new Error("Erro ao buscar produtos")
+    }
   }
 
   async getById(id) {
-    return await this.repository.getById(id);
+    await this.repository.getById(id);
   }
 
   async register(infos) {
