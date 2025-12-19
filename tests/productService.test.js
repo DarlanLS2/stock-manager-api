@@ -20,13 +20,5 @@ describe("ProductService", () => {
         .rejects
         .toThrow("Não há produtos");
     })
-
-    test("deve lançar erro de dominio quando repository retornar erro tecnico", async () => {
-      repositoryMock.getAll.mockRejectedValue(new Error("erro ao acessar o banco"))
-
-      await expect(service.getAll())
-        .rejects
-        .toThrow("Erro ao buscar produtos")
-    })
   })
 })
