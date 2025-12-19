@@ -13,7 +13,13 @@ export class ProductService {
   }
 
   async getById(id) {
-    await this.repository.getById(id);
+    const res = await this.repository.getById(id);
+    
+    if (res == null) {
+        throw new Error("Produto não registrado")
+    }
+    
+    return res
   }
 
   async register(infos) {

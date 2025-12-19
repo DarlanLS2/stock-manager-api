@@ -6,7 +6,8 @@ describe("ProductService", () => {
 
   beforeEach(() => {
     repositoryMock = {
-      getAll: jest.fn()
+      getAll: jest.fn(),
+      getById: jest.fn()
     }
 
     service = new ProductService(repositoryMock)
@@ -19,6 +20,16 @@ describe("ProductService", () => {
       await expect(service.getAll())
         .rejects
         .toThrow("Não há produtos");
+    })
+  })
+
+  describe("getById", () => {
+    test("deve lançar erro de dominio quando repository retornar null", async () => {
+      repositoryMock.getById.mockResolvedValue(null);
+
+      await expect(service.getById(20))
+        .rejects
+        .toThrow("Produto não registrado")
     })
   })
 })
