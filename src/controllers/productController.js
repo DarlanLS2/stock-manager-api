@@ -1,3 +1,5 @@
+import { ProductInputValidator } from "../utils/productInputValidator.js"
+
 export class ProductController {
   constructor(productService) {
     this.service = productService
@@ -23,6 +25,15 @@ export class ProductController {
 
   async register(req, res) {
     try {
+      const invalidFields = ProductInputValidator.isFieldsValid(req.body)
+
+      if (invalidFields.length > 0) {
+        return res.status(400).send({
+          erro: "Campo invalido",
+          invalidFields: invalidFields
+        })
+      }
+
       await this.service.register(req.body)
       res.status(200).send({message: "Produto registrado com sucesso"})
     } catch (err) {

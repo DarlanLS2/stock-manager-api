@@ -1,4 +1,6 @@
-import { Validator } from "../src/utils/validator.js"
+import { ProductInputValidator } from "../src/utils/productInputValidator.js"
+
+const Validator = ProductInputValidator
 
 describe("validator", () => {
   describe("isFieldsValid", () => {
