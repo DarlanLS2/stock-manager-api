@@ -1,3 +1,5 @@
+import { ValidationError } from "../errors/ValidationError.js"
+
 export class Product {
   constructor(fields) {
     this.#validateName(fields.name);
@@ -20,11 +22,11 @@ export class Product {
     const regex = /^(?=.{3,100}$)[A-Za-z0-9À-ÖØ-öø-ÿ]+(?:[ _-][A-Za-z0-9À-ÖØ-öø-ÿ]+)*$/;
 
     if (name == null) {
-      throw new Error("Nome invalido");
+      throw new ValidationError("Nome invalido");
     }
 
     if (!regex.test(name)) {
-      throw new Error("Nome invalido");
+      throw new ValidationError("Nome invalido");
     }
   }
 
@@ -32,11 +34,11 @@ export class Product {
     const regex = /^(0|[1-9]\d*)(,\d{1,2})?$/;
 
     if (price == null) {
-      throw new Error("Preço invalido");
+      throw new ValidationError("Preço invalido");
     } 
 
     if (!regex.test(price)) {
-      throw new Error("Preço invalido");
+      throw new ValidationError("Preço invalido");
     }
   }
 
@@ -45,11 +47,11 @@ export class Product {
     const regex = /^(0|[1-9]\d*)$/;
 
     if (quantity == null) {
-      throw new Error("Quantidade invalida");
+      throw new ValidationError("Quantidade invalida");
     } 
 
     if (!regex.test(quantity)) {
-      throw new Error("Quantidade invalida");
+      throw new ValidationError("Quantidade invalida");
     }
   }
 
@@ -57,11 +59,11 @@ export class Product {
     const regex = /^(?=.{10,500}$)(?!\s*$)[A-Za-z0-9À-ÖØ-öø-ÿ\s.,;:!?()'"%\-_/]+$/
 
     if (description == null) {
-      throw new Error("Descrição invalida");
+      throw new ValidationError("Descrição invalida");
     }
 
     if (!regex.test(description)) {
-      throw new Error("Descrição invalida")
+      throw new ValidationError("Descrição invalida")
     }
   }
 }
