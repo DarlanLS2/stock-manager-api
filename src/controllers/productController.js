@@ -15,6 +15,7 @@ export class ProductController {
         throw new NotFoundError("Não há produtos cadastrados")
       }
 
+      res.set('Cache-Control', 'private, max-age=5, must-revalidate')
       res.status(200).json(products)
     } catch(error) {
       if (error instanceof NotFoundError) {
@@ -33,6 +34,7 @@ export class ProductController {
         throw new NotFoundError("Produto não encontrado")
       }
 
+      res.set('Cache-Control', 'private, max-age=30, must-revalidate')
       res.status(200).json(product)
     } catch (error) {
       if (error instanceof NotFoundError) {
@@ -48,6 +50,7 @@ export class ProductController {
       const product = new Product(req.body)
       const createdProduct = await this.repository.register(product)
 
+      res.set('Cache-Control', 'no-store')
       res.status(200).send({
         message: "Produto criado com sucesso",
         product: createdProduct
@@ -70,6 +73,7 @@ export class ProductController {
         throw new NotFoundError("Produto não encontrado")
       }
 
+      res.set('Cache-Control', 'no-store')
       res.status(200).send({message: "Producto atualizado com sucesso"})
     } catch (error) {
       if (error instanceof ValidationError) {
@@ -90,6 +94,7 @@ export class ProductController {
         throw new NotFoundError("Produto não encontrado")
       }
 
+      res.set('Cache-Control', 'no-store')
       res.status(200).send({message: "Produto excluido com sucesso"});
     } catch (error) {
       if (error instanceof NotFoundError) {
