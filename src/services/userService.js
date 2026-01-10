@@ -1,5 +1,5 @@
-import { PassWordEncryptor } from "../utils/PassWordEncryptor";
-import { User } from "../entities/User";
+import { PassWordEncryptor } from "../utils/PassWordEncryptor.js";
+import { User } from "../entities/User.js";
 
 export class UserService {
   constructor(userRepository) {
