@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import express from "express";
 import path from "path";
 import cors from "cors";
@@ -13,6 +14,8 @@ import { Product } from "./src/models/productModel.js"
 import { ProductRepository } from "./src/repositories/productRepository.js";
 import { ProductController } from "./src/controllers/productController.js";
 import { ProductRoute } from "./src/routes/productRoute.js";
+
+dotenv.config();
 
 const __dirname = path.resolve(); 
 const server = express(); 

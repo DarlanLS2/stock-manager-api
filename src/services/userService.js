@@ -20,7 +20,7 @@ export class UserService {
 
     const token = jwt.sign(
       { id: user.id }, 
-      "segredo_mockado", 
+      process.env.JWT_SECRET, 
       { expiresIn: '1h' }
     )
 
