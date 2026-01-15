@@ -1,24 +1,9 @@
 import jwt from "jsonwebtoken"
 
 export function authMidleware(req, res, next) {
-  const authHeader = req.headers.authorization;
+  const token = extractToken(req.headers.authorization);
 
-  if (!authHeader) {
-    return res.status(401).json({ message: "Token não informado" })
-  }
-
-  const parts = authHeader.split(" ");
-
-  if (parts.lengh !== 2) {
-    return res.status(401).json({ message: "Token mal formatado" })
-  }
-
-  const [scheme, token] = parts
-
-  if (scheme !== "Bearer") {
-    return res.status(401).json({ message: "Token mal formatado" })
-  }
-
+  if (!token) return res.status(401).json({ error: "Token invalido"})
   try {
     const decoded = jwt.verify(token, "segredo_mockado")
 
@@ -28,4 +13,10 @@ export function authMidleware(req, res, next) {
   } catch (error) {
     return res.status(401).json({ error: "Token invalido ou expirado" })
   }
+}
+
+function extractToken(authHeader) {
+  if (!authHeader) return null;
+  if (!authHeader.startsWith("Bearer ")) return null;
+  return authHeader.substring(7);
 }
