@@ -9,19 +9,22 @@ export class UserService {
 
   async login(body) {
     const user = await this.repository.getByEmail(body.email);
-    const isPassWordValid = await PassWordEncryptor.check(body.passWord, user.passWordHash);
-    const token = jwt.sign({ id: user.id }, "segredo_mockado", { expiresIn: '1h' })
+    const isPassWordValid = await PassWordEncryptor.check(
+      body.passWord, 
+      user.passWordHash
+    );
     
-    if (isPassWordValid) {
-      return {
-        id: user.id,
-        email: user.email,
-        passWord: body.passWord,
-        token: token
-      };
-    } else {
+    if (!isPassWordValid) {
       return null
     }
+
+    const token = jwt.sign(
+      { id: user.id }, 
+      "segredo_mockado", 
+      { expiresIn: '1h' }
+    )
+
+    return { token: token };
   }
 
   async register(body) {
