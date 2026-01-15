@@ -5,8 +5,8 @@ export class UserRoute {
   }
 
   create() {
-    this.server.get("/user/:email", async (req, res) => {
-      await this.controller.getByEmail(req, res);
+    this.server.get("/user", async (req, res) => {
+      await this.controller.login(req, res);
     });
     this.server.post("/user", async (req, res) => {
       await this.controller.register(req, res);

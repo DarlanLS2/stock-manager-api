@@ -5,24 +5,6 @@ export class UserController {
   constructor(UserService) {
     this.service = UserService
   }
-  async getByEmail(req, res) {
-    try {
-      const user = await this.service.getByEmail(req.params.email);
-
-      if (user == null) {
-        throw new NotFoundError("Usuario não encontrado")
-      }
-
-      res.set('Cache-Control', 'private, max-age=30, must-revalidate')
-      res.status(200).json(user)
-    } catch (error) {
-      if (error instanceof NotFoundError) {
-        res.status(400).send({error: error.message})
-      } else {
-        res.status(500).send({error: error.message})
-      }
-    }
-  }
 
   async login(req, res) {
     const user = await this.service.login(req.body)
