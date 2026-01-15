@@ -6,10 +6,6 @@ export class UserService {
     this.repository = userRepository;
   }
 
-  async getByEmail(email) {
-    return await this.repository.getByEmail(email);
-  }
-
   async login(body) {
     const user = this.repository.getByEmail(body.email);
     const isValid = PassWordEncryptor.check(body.passWord, user.passWordHash);
