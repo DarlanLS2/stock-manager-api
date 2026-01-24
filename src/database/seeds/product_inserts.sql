@@ -1,4 +1,3 @@
-
 INSERT INTO produtos (
   nome,
   preco,
