@@ -7,6 +7,71 @@ let controller
 let req;
 let res;
 
+describe("delete", () => {
+  beforeEach(() => {
+    mockService = {
+      delete: jest.fn()
+    }
+
+    controller = new UserController(mockService);
+
+    req = {
+      body: { email: "random@gmail.com", passWord: "1234" }
+    }
+
+    res = {
+      status: jest.fn().mockReturnThis(),
+      sendStatus: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+      set: jest.fn()
+    }
+
+    jest.clearAllMocks()
+  })
+
+  it("return 204 on success", async () => {
+    mockService.delete.mockResolvedValue("mock")
+
+    await controller.delete(req, res);
+
+    expect(res.sendStatus).toHaveBeenCalledWith(204);
+  })
+
+  it("return 400 when service return null", async () => {
+    mockService.delete.mockResolvedValue(null)
+
+    await controller.delete(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      field: "email or passWord",
+      message: "invalid"
+    });
+  })
+
+  it("return 400 when service throw ValidationError", async () => {
+    mockService.delete.mockRejectedValue(new ValidationError("mock"))
+
+    await controller.delete(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      field: "email or passWord",
+      message: "invalid"
+    });
+  })
+
+  it("return 500 when service return unexpected error", async () => {
+    const errorMessage = "unexpected database error"
+    mockService.delete.mockRejectedValue(new Error(errorMessage))
+
+    await controller.delete(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ error: errorMessage });
+  })
+})
+
 describe("register", () => {
   beforeEach(() => {
     mockService = {
