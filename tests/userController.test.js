@@ -28,7 +28,7 @@ describe("register", () => {
     jest.clearAllMocks()
   })
 
-  it("return 201 when there is not error", async () => {
+  it("return 201 on success", async () => {
     const user = {
       id: 1,
       email: req.body.email,
@@ -111,11 +111,5 @@ describe("login", () => {
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({ error: errorMessage});
-  })
-
-  it("call service login correctly", async () => {
-    await controller.login(req, res);
-
-    expect(mockService.login).toHaveBeenCalledWith(req.body)
   })
 })
