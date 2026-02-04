@@ -71,4 +71,37 @@ describe("register", () => {
   })
 })
 
-// TODO: unit tests for delete function
+describe("delete", () => {
+  beforeEach(() => {
+    repository = {
+      getByEmail: jest.fn(),
+      deleteByEmail: jest.fn()
+    }
+    service = new UserService(repository);
+
+    body = { email: "randon@gmail.com", passWord: "1234" }
+  })
+  
+  it("throws ValidationError when user is not found", async () => {
+    repository.getByEmail.mockResolvedValue(null)
+
+    expect(service.delete(body)).rejects.toThrow(ValidationError)
+  })
+
+  it("return null when password does not match stored hash", async () => {
+    repository.getByEmail.mockResolvedValue({ passWordHash: "mock" })
+    PassWordEncryptor.check.mockResolvedValue(false);
+
+    expect(service.delete(body)).resolves.toBeNull();
+  })
+
+  it("calls repository.delete when credentials are valid", async () => {
+    repository.getByEmail.mockResolvedValue({ passWordHash: "mock" })
+    PassWordEncryptor.check.mockResolvedValue(true);
+
+    await service.delete(body);
+
+    expect(repository.deleteByEmail).toHaveBeenCalledWith(body.email)
+  })
+})
+
