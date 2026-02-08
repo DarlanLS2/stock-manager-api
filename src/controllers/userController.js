@@ -34,6 +34,8 @@ export class UserController {
     } catch (error) {
       if (error instanceof ValidationError) {
         res.status(400).json({ field: error.field, message: error.message })
+      } else if (error.name == "SequelizeUniqueConstraintError") {
+        res.status(409).json({ error: "email already in use" })
       } else {
         res.status(500).json({ error: error.message })
       }
