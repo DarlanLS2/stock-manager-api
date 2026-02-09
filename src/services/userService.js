@@ -19,7 +19,7 @@ export class UserService {
       user.passWordHash
     );
     
-    if (!isPassWordValid) return null
+    if (!isPassWordValid) throw new NotFoundError()
 
     const token = jwt.sign(
       { "sub": user.id },
