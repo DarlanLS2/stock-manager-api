@@ -32,7 +32,8 @@ describe("field validation", () => {
     const prices = [
       null,
       "10,000",
-      "10.00",
+      "10,00",
+      "01.00",
       "01,12",
     ]
 

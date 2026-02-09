@@ -31,7 +31,7 @@ export class Product {
   }
 
   #validatePrice(price) {
-    const regex = /^(0|[1-9]\d*)(,\d{1,2})?$/;
+    const regex = /^(0|[1-9]\d*)(\.\d{1,2})?$/;
 
     if (price == null) {
       throw new ValidationError("price", "required");
