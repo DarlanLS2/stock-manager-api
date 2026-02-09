@@ -181,18 +181,6 @@ describe("delete", () => {
     expect(res.sendStatus).toHaveBeenCalledWith(204);
   })
 
-  it("return 400 when service return null", async () => {
-    mockService.delete.mockResolvedValue(null)
-
-    await controller.delete(req, res);
-
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({
-      field: "email or passWord",
-      message: "invalid"
-    });
-  })
-
   it("return 400 when service throw ValidationError", async () => {
     mockService.delete.mockRejectedValue(new ValidationError("mock"))
 
@@ -200,8 +188,20 @@ describe("delete", () => {
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
-      field: "email or passWord",
-      message: "invalid"
+      title: "Invalid input",
+      detail: "Email or password format is invalid"
+    });
+  })
+
+  it("return 404 when service return null", async () => {
+    mockService.delete.mockResolvedValue(null)
+
+    await controller.delete(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      title: "User not found", 
+      detail: "No user found with the provided email"
     });
   })
 
@@ -212,6 +212,9 @@ describe("delete", () => {
     await controller.delete(req, res);
 
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ error: errorMessage });
+    expect(res.json).toHaveBeenCalledWith({
+      title: "Unexpected error",
+      detail: "unexpected database error",
+    });
   })
 })

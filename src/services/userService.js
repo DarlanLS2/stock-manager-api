@@ -45,7 +45,7 @@ export class UserService {
   async delete(body) {
     const user = await this.repository.getByEmail(body.email);
 
-    if (!user) throw new ValidationError()
+    if (!user) throw new NotFoundError()
 
     const isPassWordValid = await PassWordEncryptor.check(
       body.passWord, 

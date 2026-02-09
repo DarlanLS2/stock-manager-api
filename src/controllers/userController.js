@@ -66,16 +66,27 @@ export class UserController {
       const user = await this.service.delete(req.body);
 
       if (user == null) {
-        throw new ValidationError()
+        throw new NotFoundError()
       }
 
       res.set('Cache-Control', 'no-store')
       res.sendStatus(204);
     } catch (error) {
       if (error instanceof ValidationError) {
-        res.status(400).json({ field: "email or passWord", message: "invalid"})
+        res.status(400).json({ 
+          title: "Invalid input",
+          detail: "Email or password format is invalid"
+        })
+      } else if (error instanceof NotFoundError) {
+        res.status(404).json({
+          title: "User not found", 
+          detail: "No user found with the provided email"
+        })
       } else {
-        res.status(500).json({ error: error.message })
+        res.status(500).json({
+          title: "Unexpected error",
+          detail: "unexpected database error",
+        })
       }
     }
   }
