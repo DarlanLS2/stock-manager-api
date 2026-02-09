@@ -55,9 +55,15 @@ export class ProductController {
       res.status(201).json(createdProduct)
     } catch (error) {
       if (error instanceof ValidationError) {
-        res.status(400).json({ field: error.field, message: error.message })
+        res.status(400).json({
+          title: "Invalid input",
+          detail: `Invalid ${error.field} format`
+        })
       } else {
-        res.status(500).json({ error: error.message })
+        res.status(500).json({
+          title: "Unexpected error",
+          detail: error.message
+        })
       }
     }
   }

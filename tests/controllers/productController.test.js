@@ -163,7 +163,10 @@ describe("register", () => {
     await controller.register(req, res);
     
     expect(res.status).toHaveBeenCalledWith(400)
-    expect(res.json).toHaveBeenCalledWith({ field: "name", message: "required"})
+    expect(res.json).toHaveBeenCalledWith({
+      title: "Invalid input",
+      detail: "Invalid name format"
+    })
   })
 
   it("return 500 when repository throws unexpected error", async () => {
@@ -173,7 +176,10 @@ describe("register", () => {
     await controller.register(req, res);
     
     expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.json).toHaveBeenCalledWith({ error: "unexpected database error" })
+    expect(res.json).toHaveBeenCalledWith({
+      title: "Unexpected error",
+      detail: "unexpected database error",
+    })
   })
 })
 
