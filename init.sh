@@ -191,15 +191,18 @@ printHelp() {
 ${bold} Usage: ./init.sh${reset} [OPTIONS]
 
 ${bold} Options:${reset}
-${bold}   --full${reset}
+${bold}   -i,--interactive${reset}
+           Run interactive mode 
+
+${bold}   -f,--full${reset}
            Run the full setup process.
            Rebuilds Docker containers, waits for the database 
            to be ready and optionally inserts initial data.
 
-${bold}   --insert${reset}
+${bold}   -s,--insert${reset}
            Insert initial seed data into the database only.
 
-${bold}   --help${reset}
+${bold}   -h,--help${reset}
            Print help
 EOF
 }
@@ -295,18 +298,11 @@ main() {
   fi
 
   case "$1" in
-    --insert)
-      loadEnv
-      runSeedInsertInteractive
-      return 0
-      ;;
-    
-    --help)
-      printHelp
-      return 0
+    -i | --interactive)
+      interactiveMode
       ;;
 
-    --full)
+    -f | --full)
       if [ -f ".env" ]; then 
         validateEnvVariables
       else 
@@ -323,8 +319,15 @@ main() {
       return 0
       ;;
 
-    -i | --interactive)
-      interactiveMode
+    -s | --insert)
+      loadEnv
+      runSeedInsertInteractive
+      return 0
+      ;;
+    
+    -h | --help)
+      printHelp
+      return 0
       ;;
 
     *)
