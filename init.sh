@@ -193,7 +193,7 @@ printHelp() {
 ${bold} Usage: ./init.sh${reset} [OPTIONS]
 
 ${bold} Options:${reset}
-${bold}   --first${reset}
+${bold}   --full${reset}
            Run the full setup process.
            Rebuilds Docker containers, waits for the database 
            to be ready and optionally inserts initial data.
@@ -230,7 +230,7 @@ main() {
 
   loadEnv
 
-  if [ "$1" = "--first" ]; then
+  if [ "$1" = "--full" ]; then
     resetAndRunDockerCompose
     waitForDB
     runSeedInsertInteractive
