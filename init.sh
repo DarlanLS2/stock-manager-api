@@ -204,6 +204,79 @@ ${bold}   --help${reset}
 EOF
 }
 
+stopDockerCompose() {
+  echo ""
+  echo ""
+  docker compose down
+}
+
+interactiveMode() {
+  option=1
+
+  while (( $option != 0 )); do
+    clear
+
+    printf " ┌────────────────────────────────────────────────────────┐\n"
+    printf " │                         $bold MENU$reset                          │\n"
+    printf " └────────────────────────────────────────────────────────┘\n\n"
+    printf "  $lightBlue▪$reset$bold Setup completo$reset (apaga containers e insere produtos) $green[1]$reset\n"
+    printf "  $lightBlue▪$reset$bold Start normal$reset  (mantém containers e dados)           $green[2]$reset\n"
+    printf "  $lightBlue▪$reset$bold Parar server e banco$reset                                $green[3]$reset\n"
+    printf "  $lightBlue▪$reset$bold Inserir produtos no banco$reset                           $green[4]$reset\n"
+    printf "  $lightBlue▪$reset$bold Sair$reset                                                $green[0]$reset\n\n"
+     
+    printf "$green  ?$reset Opção: $blue"
+    read option
+    echo -ne $reset
+
+    case $option in
+      1)
+        if [ -f ".env" ]; then 
+          validateEnvVariables
+        else 
+          setupEnvVariables
+        fi
+
+        loadEnv
+
+        resetAndRunDockerCompose
+        waitForDB
+        runSeedInsertInteractive
+
+        printSuccessMessage
+        return 0
+      ;;
+
+      2)
+        if [ -f ".env" ]; then 
+          validateEnvVariables
+        else 
+          setupEnvVariables
+        fi
+
+        loadEnv
+
+        runDockerCompose
+        waitForDB
+
+        printSuccessMessage
+        return 0
+        ;;
+
+      3)
+        stopDockerCompose
+        return 0
+        ;;
+
+      4)
+        loadEnv
+        runSeedInsertInteractive
+        return 0
+        ;;
+    esac
+  done
+}
+
 main() {
   if [ -z "$1" ]; then
       if [ -f ".env" ]; then 
@@ -250,10 +323,14 @@ main() {
       return 0
       ;;
 
+    -i | --interactive)
+      interactiveMode
+      ;;
+
     *)
       printHelp
       return 0
-    ;;
+      ;;
   esac
 }
 
