@@ -135,7 +135,6 @@ spinner() {
 }
 
 resetAndRunDockerCompose() {
-  # printf " $orange…$lightBlue Preparando server$reset"
   spinner "Preparando server" &
   pid=$!
 
@@ -149,7 +148,6 @@ resetAndRunDockerCompose() {
 }
 
 waitForDB() {
-  # printf " $orange…$lightBlue Preparando banco$reset"
   spinner "Preparando banco" &
   pid=$!
 
@@ -207,6 +205,22 @@ EOF
 }
 
 main() {
+  if [ -z "$1" ]; then
+      if [ -f ".env" ]; then 
+        validateEnvVariables
+      else 
+        setupEnvVariables
+      fi
+
+      loadEnv
+
+      runDockerCompose
+      waitForDB
+
+      printSuccessMessage
+      return 0
+  fi
+
   case "$1" in
     --insert)
       loadEnv
@@ -218,28 +232,29 @@ main() {
       printHelp
       return 0
       ;;
+
+    --full)
+      if [ -f ".env" ]; then 
+        validateEnvVariables
+      else 
+        setupEnvVariables
+      fi
+
+      loadEnv
+
+      resetAndRunDockerCompose
+      waitForDB
+      runSeedInsertInteractive
+
+      printSuccessMessage
+      return 0
+      ;;
+
+    *)
+      printHelp
+      return 0
+    ;;
   esac
-
-  clear
-
-  if [ -f ".env" ]; then 
-    validateEnvVariables
-  else 
-    setupEnvVariables
-  fi
-
-  loadEnv
-
-  if [ "$1" = "--full" ]; then
-    resetAndRunDockerCompose
-    waitForDB
-    runSeedInsertInteractive
-  else
-    runDockerCompose
-    waitForDB
-  fi
-
-  printSuccessMessage
 }
 
 main "$@"
