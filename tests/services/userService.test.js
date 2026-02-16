@@ -1,12 +1,12 @@
-import { UserService } from "../../src/services/userService.js";
-import { ValidationError } from "../../src/errors/ValidationError.js";
-import { PasswordEncryptor } from "../../src/utils/PasswordEncryptor.js";
-import { User } from "../../src/entities/User.js"
+import { UserService } from "../../dist/services/userService.js";
+import { ValidationError } from "../../dist/errors/ValidationError.js";
+import { PasswordEncryptor } from "../../dist/utils/PasswordEncryptor.js";
+import { User } from "../../dist/entities/User.js"
 import jwt from "jsonwebtoken";
 
-jest.mock("../../src/utils/PasswordEncryptor.js");
+jest.mock("../../dist/utils/PasswordEncryptor.js");
 jest.mock("jsonwebtoken")
-jest.mock("../../src/entities/User.js")
+jest.mock("../../dist/entities/User.js")
 
 let repository;
 let service;

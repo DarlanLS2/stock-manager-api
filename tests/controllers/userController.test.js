@@ -1,6 +1,6 @@
-import { UserController } from "../../src/controllers/userController.js"
-import { NotFoundError } from "../../src/errors/NotFoundError.js";
-import { ValidationError } from "../../src/errors/ValidationError.js";
+import { UserController } from "../../dist/controllers/userController.js"
+import { NotFoundError } from "../../dist/errors/NotFoundError.js";
+import { ValidationError } from "../../dist/errors/ValidationError.js";
 
 let mockService;
 let controller

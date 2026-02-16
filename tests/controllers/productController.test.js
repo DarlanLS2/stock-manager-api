@@ -1,8 +1,8 @@
-import { ProductController } from "../../src/controllers/productController.js";
-import { ValidationError } from "../../src/errors/ValidationError.js";
-import { Product } from "../../src/entities/Product.js"
+import { ProductController } from "../../dist/controllers/productController.js";
+import { ValidationError } from "../../dist/errors/ValidationError.js";
+import { Product } from "../../dist/entities/Product.js"
 
-jest.mock("../../src/entities/Product.js")
+jest.mock("../../dist/entities/Product.js")
 
 let repository;
 let products;
