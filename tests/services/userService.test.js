@@ -1,10 +1,10 @@
 import { UserService } from "../../src/services/userService.js";
 import { ValidationError } from "../../src/errors/ValidationError.js";
-import { PassWordEncryptor } from "../../src/utils/PassWordEncryptor.js";
+import { PasswordEncryptor } from "../../src/utils/PasswordEncryptor.js";
 import { User } from "../../src/entities/User.js"
 import jwt from "jsonwebtoken";
 
-jest.mock("../../src/utils/PassWordEncryptor.js");
+jest.mock("../../src/utils/PasswordEncryptor.js");
 jest.mock("jsonwebtoken")
 jest.mock("../../src/entities/User.js")
 
@@ -31,7 +31,7 @@ describe("login", () => {
 
   it("return null when password does not match stored hash", async () => {
     repository.getByEmail.mockResolvedValue({ passWordHash: "mock" })
-    PassWordEncryptor.check.mockResolvedValue(false);
+    PasswordEncryptor.check.mockResolvedValue(false);
 
     expect(service.login(body)).resolves.toBeNull();
   })
@@ -39,7 +39,7 @@ describe("login", () => {
   it("return auth token when credentials are valid", async () => {
     const token = "asdfasdbadgasdfgadfasdf"
     repository.getByEmail.mockResolvedValue({ passWordHash: "mock" })
-    PassWordEncryptor.check.mockResolvedValue(true);
+    PasswordEncryptor.check.mockResolvedValue(true);
     jwt.sign.mockReturnValue(token);
 
     expect(service.login(body)).resolves.toEqual({ token: token });
@@ -63,7 +63,7 @@ describe("register", () => {
       passWordHash: "1234"
     }
     User.mockImplementation(() => (user));
-    PassWordEncryptor.encrypt.mockReturnValue("1234")
+    PasswordEncryptor.encrypt.mockReturnValue("1234")
 
     await service.register(body);
 
@@ -90,14 +90,14 @@ describe("delete", () => {
 
   it("return null when password does not match stored hash", async () => {
     repository.getByEmail.mockResolvedValue({ passWordHash: "mock" })
-    PassWordEncryptor.check.mockResolvedValue(false);
+    PasswordEncryptor.check.mockResolvedValue(false);
 
     expect(service.delete(body)).resolves.toBeNull();
   })
 
   it("calls repository.delete when credentials are valid", async () => {
     repository.getByEmail.mockResolvedValue({ passWordHash: "mock" })
-    PassWordEncryptor.check.mockResolvedValue(true);
+    PasswordEncryptor.check.mockResolvedValue(true);
 
     await service.delete(body);
 

@@ -1,4 +1,4 @@
-import { PassWordEncryptor } from "../utils/PassWordEncryptor.js";
+import { PasswordEncryptor } from "../utils/PasswordEncryptor.js";
 import { User } from "../entities/User.js";
 import jwt from "jsonwebtoken"
 import { ValidationError } from "../errors/ValidationError.js";
@@ -14,7 +14,7 @@ export class UserService {
 
     if (!user) throw new NotFoundError()
 
-    const isPassWordValid = await PassWordEncryptor.check(
+    const isPassWordValid = await PasswordEncryptor.check(
       body.passWord, 
       user.passWordHash
     );
@@ -31,7 +31,7 @@ export class UserService {
   }
 
   async register(body) {
-    const encryptedPassWord = await PassWordEncryptor.encrypt(body.passWord)
+    const encryptedPassWord = await PasswordEncryptor.encrypt(body.passWord)
 
     const user = new User({
       id: null,
@@ -47,7 +47,7 @@ export class UserService {
 
     if (!user) throw new NotFoundError()
 
-    const isPassWordValid = await PassWordEncryptor.check(
+    const isPassWordValid = await PasswordEncryptor.check(
       body.passWord, 
       user.passWordHash
     );
