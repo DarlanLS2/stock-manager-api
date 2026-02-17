@@ -3,6 +3,7 @@ import { ValidationError } from "../../dist/errors/ValidationError.js";
 import { PasswordEncryptor } from "../../dist/utils/PasswordEncryptor.js";
 import { User } from "../../dist/entities/User.js"
 import jwt from "jsonwebtoken";
+import { NotFoundError } from "../../dist/errors/NotFoundError.js";
 
 jest.mock("../../dist/utils/PasswordEncryptor.js");
 jest.mock("jsonwebtoken")
@@ -26,14 +27,14 @@ describe("login", () => {
   it("throws ValidationError when user is not found", async () => {
     repository.getByEmail.mockResolvedValue(null)
 
-    expect(service.login(body)).rejects.toThrow(ValidationError)
+    expect(service.login(body)).rejects.toThrow(NotFoundError)
   })
 
   it("return null when password does not match stored hash", async () => {
     repository.getByEmail.mockResolvedValue({ passWordHash: "mock" })
     PasswordEncryptor.check.mockResolvedValue(false);
 
-    expect(service.login(body)).resolves.toBeNull();
+    expect(service.login(body)).rejects.toThrow(NotFoundError)
   })
 
   it("return auth token when credentials are valid", async () => {
@@ -85,7 +86,7 @@ describe("delete", () => {
   it("throws ValidationError when user is not found", async () => {
     repository.getByEmail.mockResolvedValue(null)
 
-    expect(service.delete(body)).rejects.toThrow(ValidationError)
+    expect(service.delete(body)).rejects.toThrow(NotFoundError)
   })
 
   it("return null when password does not match stored hash", async () => {
