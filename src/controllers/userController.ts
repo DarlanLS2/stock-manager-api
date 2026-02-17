@@ -1,17 +1,21 @@
+import type { Request, Response } from "express"
 import { NotFoundError } from "../errors/NotFoundError.js"
 import { ValidationError } from "../errors/ValidationError.js"
+import { UserService } from "../services/userService.js"
 
 export class UserController {
-  constructor(UserService) {
+  private service: UserService
+
+  constructor(UserService: UserService) {
     this.service = UserService
   }
 
-  async login(req, res) {
+  async login(req: Request, res: Response) {
     try {
       const user = await this.service.login(req.body)
 
       res.status(200).json(user)
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof ValidationError) {
         res.status(400).json({
           title: "Invalid input", 
@@ -31,7 +35,7 @@ export class UserController {
     }
   }
 
-  async register(req, res) {
+  async register(req: Request, res: Response) {
     try {
       const createdUser = await this.service.register(req.body)
 
@@ -41,7 +45,7 @@ export class UserController {
         email: createdUser.email,
         passWord: req.body.passWord
       })
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof ValidationError) {
         res.status(400).json({
           title: "Invalid input", 
@@ -61,17 +65,15 @@ export class UserController {
     }
   }
 
-  async delete(req, res) {
+  async delete(req: Request, res: Response) {
     try {
       const user = await this.service.delete(req.body);
 
-      if (user == null) {
-        throw new NotFoundError()
-      }
+      if (user == null) throw new NotFoundError()
 
       res.set('Cache-Control', 'no-store')
       res.sendStatus(204);
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof ValidationError) {
         res.status(400).json({ 
           title: "Invalid input",
