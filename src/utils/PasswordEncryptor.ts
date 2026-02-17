@@ -1,11 +1,11 @@
 import bcrypt from "bcrypt";
 
-export class PassWordEncryptor {
-  static async encrypt(passWord) {
+export class PasswordEncryptor {
+  static async encrypt(passWord: string) {
     return await bcrypt.hash(passWord, 10)
   }
 
-  static async check(rawPassWord, hash) {
+  static async check(rawPassWord: string, hash: string) {
     return await bcrypt.compare(rawPassWord, hash);
   }
 }

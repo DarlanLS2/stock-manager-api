@@ -1,12 +1,13 @@
-import { UserService } from "../../src/services/userService.js";
-import { ValidationError } from "../../src/errors/ValidationError.js";
-import { PassWordEncryptor } from "../../src/utils/PassWordEncryptor.js";
-import { User } from "../../src/entities/User.js"
+import { UserService } from "../../dist/services/userService.js";
+import { ValidationError } from "../../dist/errors/ValidationError.js";
+import { PasswordEncryptor } from "../../dist/utils/PasswordEncryptor.js";
+import { User } from "../../dist/entities/User.js"
 import jwt from "jsonwebtoken";
+import { NotFoundError } from "../../dist/errors/NotFoundError.js";
 
-jest.mock("../../src/utils/PassWordEncryptor.js");
+jest.mock("../../dist/utils/PasswordEncryptor.js");
 jest.mock("jsonwebtoken")
-jest.mock("../../src/entities/User.js")
+jest.mock("../../dist/entities/User.js")
 
 let repository;
 let service;
@@ -26,20 +27,21 @@ describe("login", () => {
   it("throws ValidationError when user is not found", async () => {
     repository.getByEmail.mockResolvedValue(null)
 
-    expect(service.login(body)).rejects.toThrow(ValidationError)
+    expect(service.login(body)).rejects.toThrow(NotFoundError)
   })
 
   it("return null when password does not match stored hash", async () => {
     repository.getByEmail.mockResolvedValue({ passWordHash: "mock" })
-    PassWordEncryptor.check.mockResolvedValue(false);
+    PasswordEncryptor.check.mockResolvedValue(false);
 
-    expect(service.login(body)).resolves.toBeNull();
+    expect(service.login(body)).rejects.toThrow(NotFoundError)
   })
 
   it("return auth token when credentials are valid", async () => {
     const token = "asdfasdbadgasdfgadfasdf"
     repository.getByEmail.mockResolvedValue({ passWordHash: "mock" })
-    PassWordEncryptor.check.mockResolvedValue(true);
+    PasswordEncryptor.check.mockResolvedValue(true);
+    process.env.JWT_SECRET = "teste"
     jwt.sign.mockReturnValue(token);
 
     expect(service.login(body)).resolves.toEqual({ token: token });
@@ -63,7 +65,7 @@ describe("register", () => {
       passWordHash: "1234"
     }
     User.mockImplementation(() => (user));
-    PassWordEncryptor.encrypt.mockReturnValue("1234")
+    PasswordEncryptor.encrypt.mockReturnValue("1234")
 
     await service.register(body);
 
@@ -85,19 +87,19 @@ describe("delete", () => {
   it("throws ValidationError when user is not found", async () => {
     repository.getByEmail.mockResolvedValue(null)
 
-    expect(service.delete(body)).rejects.toThrow(ValidationError)
+    expect(service.delete(body)).rejects.toThrow(NotFoundError)
   })
 
   it("return null when password does not match stored hash", async () => {
     repository.getByEmail.mockResolvedValue({ passWordHash: "mock" })
-    PassWordEncryptor.check.mockResolvedValue(false);
+    PasswordEncryptor.check.mockResolvedValue(false);
 
     expect(service.delete(body)).resolves.toBeNull();
   })
 
   it("calls repository.delete when credentials are valid", async () => {
     repository.getByEmail.mockResolvedValue({ passWordHash: "mock" })
-    PassWordEncryptor.check.mockResolvedValue(true);
+    PasswordEncryptor.check.mockResolvedValue(true);
 
     await service.delete(body);
 
