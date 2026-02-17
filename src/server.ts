@@ -1,11 +1,12 @@
 import { syncDatabase } from "./database/sync.js";
+import { authMiddleware } from "./authentication/authMiddleware.js";
+
 import { User } from "./database/models/userModel.js";
 import { UserRepository } from "./repositories/userRepository.js";
 import { UserController } from "./controllers/userController.js";
 import { UserService } from "./services/userService.js";
 import { UserRoute } from "./routes/userRoute.js"
 
-import { authMiddleware } from "./authentication/authMiddleware.js";
 
 import { Product } from "./database/models/productModel.js"
 import { ProductRepository } from "./repositories/productRepository.js";
@@ -24,7 +25,9 @@ const app = await init(
   { authMiddleware },
 )
 
-app.listen(process.env.PORT, "0.0.0.0", () => {
+const port = Number(process.env.PORT)
+
+app.listen(port, "0.0.0.0", () => {
   console.log(`
     ------------------------\n
     PORTA: ${process.env.PORT}\n
