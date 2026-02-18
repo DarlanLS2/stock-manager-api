@@ -194,7 +194,7 @@ describe("delete", () => {
   })
 
   it("return 404 when service return null", async () => {
-    mockService.delete.mockResolvedValue(null)
+    mockService.delete.mockRejectedValue(new NotFoundError);
 
     await controller.delete(req, res);
 

@@ -94,7 +94,7 @@ describe("delete", () => {
     repository.getByEmail.mockResolvedValue({ passWordHash: "mock" })
     PasswordEncryptor.check.mockResolvedValue(false);
 
-    expect(service.delete(body)).resolves.toBeNull();
+    expect(service.delete(body)).rejects.toThrow(NotFoundError);
   })
 
   it("calls repository.delete when credentials are valid", async () => {
