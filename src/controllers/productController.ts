@@ -2,18 +2,18 @@ import type { Request, Response } from "express"
 import { Product } from "../entities/Product.js"
 import { ValidationError } from "../errors/ValidationError.js"
 import { NotFoundError } from "../errors/NotFoundError.js"
-import { ProductRepository } from "../repositories/productRepository.js"
+import { ProductService } from "../services/productService.js"
 
 export class ProductController {
-  repository: ProductRepository
+  service: ProductService
 
-  constructor(productRepository: ProductRepository) {
-    this.repository = productRepository
+  constructor(productService: ProductService) {
+    this.service = productService
   }
 
   async getAll(req: Request, res: Response) {
     try {
-      const products = await this.repository.getAll();
+      const products = await this.service.getAll();
 
       res.set('Cache-Control', 'private, max-age=5, must-revalidate')
       res.status(200).json(products)
@@ -27,11 +27,7 @@ export class ProductController {
 
   async getById(req: Request, res: Response) {
     try {
-      if (!req.params.id) throw new Error("No id parameter found")
-
-      const product = await this.repository.getById(req.params.id);
-
-      if (!product) throw new NotFoundError()
+      const product = await this.service.getById(req.params.id);
 
       res.set('Cache-Control', 'private, max-age=30, must-revalidate')
       res.status(200).json(product)
@@ -52,8 +48,7 @@ export class ProductController {
 
   async register(req: Request, res: Response) {
     try {
-      const product = new Product(req.body)
-      const createdProduct = await this.repository.register(product)
+      const createdProduct = await this.service.register(req.body)
 
       res.set('Cache-Control', 'no-store')
       res.status(201).json(createdProduct)
@@ -74,10 +69,7 @@ export class ProductController {
 
   async update(req: Request, res: Response) {
     try {
-      const product = new Product(req.body);
-      const updatedProduct = await this.repository.update(product);
-
-      if (updatedProduct[0] < 1) throw new NotFoundError()
+      await this.service.update(req.body);
 
       res.set('Cache-Control', 'no-store');
       res.sendStatus(204);
@@ -103,11 +95,7 @@ export class ProductController {
 
   async delete(req: Request, res: Response) {
     try {
-      if (!req.params.id) throw new Error()
-
-      const product = await this.repository.delete(req.params.id);
-
-      if (product < 1) throw new NotFoundError()
+      await this.service.delete(req.params.id);
 
       res.set('Cache-Control', 'no-store')
       res.sendStatus(204);
