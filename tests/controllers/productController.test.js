@@ -1,10 +1,11 @@
 import { ProductController } from "../../dist/controllers/productController.js";
 import { ValidationError } from "../../dist/errors/ValidationError.js";
 import { Product } from "../../dist/entities/Product.js"
+import { NotFoundError } from "../../dist/errors/NotFoundError.js";
 
 jest.mock("../../dist/entities/Product.js")
 
-let repository;
+let service;
 let products;
 let controller;
 let req;
@@ -12,10 +13,10 @@ let res;
 
 describe("getAll", () => {
   beforeEach(() => {
-    repository = {
+    service = {
       getAll: jest.fn()
     }
-    controller = new ProductController(repository);
+    controller = new ProductController(service);
 
     products = [
       { name: "mock1" },
@@ -36,7 +37,7 @@ describe("getAll", () => {
   })
 
   it("return 200 on success", async () => {
-    repository.getAll.mockResolvedValue(products);
+    service.getAll.mockResolvedValue(products);
 
     await controller.getAll(req, res);
 
@@ -44,8 +45,8 @@ describe("getAll", () => {
     expect(res.json).toHaveBeenCalledWith(products)
   })
 
-  it("return 500 when repository throws unexpected error", async () => {
-    repository.getAll.mockRejectedValue(new Error("unexpected database error"));
+  it("return 500 when service throws unexpected error", async () => {
+    service.getAll.mockRejectedValue(new Error("unexpected database error"));
 
     await controller.getAll(req, res);
 
@@ -59,10 +60,10 @@ describe("getAll", () => {
 
 describe("getById", () => {
   beforeEach(() => {
-    repository = {
+    service = {
       getById: jest.fn()
     }
-    controller = new ProductController(repository);
+    controller = new ProductController(service);
 
     products = [
       { name: "mock1" },
@@ -86,7 +87,7 @@ describe("getById", () => {
   })
 
   it("return 200 on success", async () => {
-    repository.getById.mockResolvedValue(products[1]);
+    service.getById.mockResolvedValue(products[1]);
 
     await controller.getById(req, res);
 
@@ -94,8 +95,8 @@ describe("getById", () => {
     expect(res.json).toHaveBeenCalledWith(products[1])
   })
 
-  it("return 404 when throws NotFoundError", async () => {
-    repository.getById.mockResolvedValue(null);
+  it("return 404 when service throws NotFoundError", async () => {
+    service.getById.mockRejectedValue(new NotFoundError);
 
     await controller.getById(req, res);
 
@@ -106,8 +107,8 @@ describe("getById", () => {
     })
   })
 
-  it("return 500 when repository throws unexpected error", async () => {
-    repository.getById.mockRejectedValue(new Error("unexpected database error"));
+  it("return 500 when service throws unexpected error", async () => {
+    service.getById.mockRejectedValue(new Error("unexpected database error"));
 
     await controller.getById(req, res);
 
@@ -121,10 +122,10 @@ describe("getById", () => {
 
 describe("register", () => {
   beforeEach(() => {
-    repository = {
+    service = {
       register: jest.fn()
     }
-    controller = new ProductController(repository);
+    controller = new ProductController(service);
 
     products = [
       { name: "mock1" },
@@ -146,7 +147,7 @@ describe("register", () => {
 
   it("return 201 on success", async () => {
     Product.mockImplementation((body) => (body))
-    repository.register.mockResolvedValue(products[1])
+    service.register.mockResolvedValue(products[1])
 
     await controller.register(req, res);
     
@@ -154,11 +155,8 @@ describe("register", () => {
     expect(res.json).toHaveBeenCalledWith(products[1])
   })
 
-  it("return 400 when product have invalid field", async () => {
-    Product.mockImplementation(() => {
-      throw new ValidationError("name", "required")
-    })
-    repository.register.mockResolvedValue(products[1])
+  it("return 400 when service throws ValidationError", async () => {
+    service.register.mockRejectedValue(new ValidationError("name", "required"));
 
     await controller.register(req, res);
     
@@ -169,9 +167,9 @@ describe("register", () => {
     })
   })
 
-  it("return 500 when repository throws unexpected error", async () => {
+  it("return 500 when service throws unexpected error", async () => {
     Product.mockImplementation((body) => (body));
-    repository.register.mockRejectedValue(new Error("unexpected database error"))
+    service.register.mockRejectedValue(new Error("unexpected database error"))
 
     await controller.register(req, res);
     
@@ -185,10 +183,10 @@ describe("register", () => {
 
 describe("update", () => {
   beforeEach(() => {
-    repository = {
+    service = {
       update: jest.fn()
     }
-    controller = new ProductController(repository);
+    controller = new ProductController(service);
 
     products = [
       { name: "mock1" },
@@ -211,17 +209,15 @@ describe("update", () => {
 
   it("return 204 on success", async () => {
     Product.mockImplementation((body) => body);
-    repository.update.mockResolvedValue([1])
+    service.update.mockResolvedValue([1])
 
     await controller.update(req, res);
 
     expect(res.sendStatus).toHaveBeenCalledWith(204);
   })
 
-  it("return 400 when product hava invalida field", async () => {
-    Product.mockImplementation(() => {
-      throw new ValidationError("name", "required")
-    });
+  it("return 400 when service throws ValidationError", async () => {
+    service.update.mockRejectedValue(new ValidationError("name", "required"));
 
     await controller.update(req, res);
 
@@ -233,8 +229,7 @@ describe("update", () => {
   })
 
   it("return 404 when throws NotFoundError", async () => {
-    Product.mockImplementation((body) => body);
-    repository.update.mockResolvedValue([0])
+    service.update.mockRejectedValue(new NotFoundError);
 
     await controller.update(req, res);
 
@@ -245,9 +240,9 @@ describe("update", () => {
     });
   })
 
-  it("return 500 when repository throws unexpected error", async () => {
+  it("return 500 when service throws unexpected error", async () => {
     Product.mockImplementation((body) => body);
-    repository.update.mockRejectedValue(new Error("unexpected database error"))
+    service.update.mockRejectedValue(new Error("unexpected database error"))
 
     await controller.update(req, res);
 
@@ -261,10 +256,10 @@ describe("update", () => {
 
 describe("delete", () => {
   beforeEach(() => {
-    repository = {
+    service = {
       delete: jest.fn()
     }
-    controller = new ProductController(repository);
+    controller = new ProductController(service);
 
     products = [
       { name: "mock1" },
@@ -288,7 +283,7 @@ describe("delete", () => {
   })
 
   it("return 204 on success", async () => {
-    repository.delete.mockResolvedValue(1)
+    service.delete.mockResolvedValue(1)
 
     await controller.delete(req, res);
 
@@ -296,7 +291,7 @@ describe("delete", () => {
   })
 
   it("return 404 when throws NotFoundError", async () => {
-    repository.delete.mockResolvedValue(0)
+    service.delete.mockRejectedValue(new NotFoundError);
 
     await controller.delete(req, res);
 
@@ -307,8 +302,8 @@ describe("delete", () => {
     });
   })
 
-  it("return 500 when repository throws unexpected error", async () => {
-    repository.delete.mockRejectedValue(new Error("unexpected database error"))
+  it("return 500 when service throws unexpected error", async () => {
+    service.delete.mockRejectedValue(new Error("unexpected database error"))
 
     await controller.delete(req, res);
 
