@@ -189,7 +189,7 @@ printHelp() {
  This script helps you configure environment variables,
  start Docker containers, prepare the database and run the server.
 
-${bold} Usage: ./init.sh${reset} [OPTIONS]
+${bold} Usage: ./CLI.sh${reset} [OPTIONS]
 
 ${bold} Options:${reset}
 ${bold}   -i,--interactive${reset}
