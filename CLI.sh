@@ -18,7 +18,7 @@ loadEnv() {
 }
 
 runSeedInsertInteractive() {
-  read -p "$green ?$reset Quer fazer o insert de produtos? $green(recomendado)$reset $lightBlue[y/n]$reset: $blue" res
+  read -p "$green ?$reset Do you want to insert products? $green(recommended)$reset $lightBlue[y/n]$reset: $blue" res
   echo -ne $reset
 
   if [ "$res" = "y" ]; then
@@ -45,7 +45,7 @@ ensureEnvVariable () {
   local value="${!key}"
 
   if ! isNotEmpty $value; then
-    printf "$red ❌$reset Você não definiu $value...\n"
+    printf "$red ❌$reset You did not define $value...\n"
     sleep 1
     printf "\r$cursorUp$resetLine"
     askAndSaveEnvVariable $key
@@ -90,7 +90,7 @@ askAndSaveEnvVariable() {
       break
     fi
 
-    printf "$red ❌$lightBlue Valor invalido. Digite novamente..."
+    printf "$red ❌$lightBlue Invalid value. Please try again..."
     sleep 1
     printf "\r$resetLine$cursorUp\r$resetLine"
   done
@@ -99,7 +99,7 @@ askAndSaveEnvVariable() {
 setupEnvVariables() {
   touch .env
 
-  echo -e "\n $purpleᐳ$reset Preciso que você defina essas$bold variaveis$reset:"
+  echo -e "\n $purpleᐳ$reset I need you to define these$bold variables$reset:"
 
   askAndSaveEnvVariable DB_NAME
   askAndSaveEnvVariable DB_USER
@@ -135,7 +135,7 @@ spinner() {
 }
 
 resetAndRunDockerCompose() {
-  spinner "Preparando server" &
+  spinner "Preparing server" &
   pid=$!
 
   docker compose down -v --remove-orphans > /dev/null 2>&1
@@ -144,11 +144,11 @@ resetAndRunDockerCompose() {
 
   kill $pid
 
-  printf "\r$resetLine $green✓$lightBlue Preparando server$reset\n"
+  printf "\r$resetLine $green✓$lightBlue Preparing server$reset\n"
 }
 
 waitForDB() {
-  spinner "Preparando banco" &
+  spinner "Preparing database" &
   pid=$!
 
   until docker exec mysql-db mysqladmin ping \
@@ -163,11 +163,11 @@ waitForDB() {
 
   kill $pid
 
-  printf "\r$resetLine $green✓$lightBlue Preparando banco$reset\n"
+  printf "\r$resetLine $green✓$lightBlue Preparing database$reset\n"
 }
 
 printSuccessMessage() {
-  echo -e "$purple$bold ↳$reset$bold Server rodando na porta:$blue 3000$reset\n"
+  echo -e "$purple$bold ↳$reset$bold Server running on port:$blue $PORT$reset\n"
 }
 
 runDockerCompose() {
@@ -222,13 +222,13 @@ interactiveMode() {
     printf " ┌────────────────────────────────────────────────────────┐\n"
     printf " │                         $bold MENU$reset                          │\n"
     printf " └────────────────────────────────────────────────────────┘\n\n"
-    printf "  $lightBlue▪$reset$bold Setup completo$reset (apaga containers e insere produtos) $green[1]$reset\n"
-    printf "  $lightBlue▪$reset$bold Start normal$reset  (mantém containers e dados)           $green[2]$reset\n"
-    printf "  $lightBlue▪$reset$bold Parar server e banco$reset                                $green[3]$reset\n"
-    printf "  $lightBlue▪$reset$bold Inserir produtos no banco$reset                           $green[4]$reset\n"
-    printf "  $lightBlue▪$reset$bold Sair$reset                                                $green[0]$reset\n\n"
+    printf "  $lightBlue▪$reset$bold Full setup$reset (removes containers and inserts products) $green[1]$reset\n"
+    printf "  $lightBlue▪$reset$bold Normal start$reset (keeps containers and data)             $green[2]$reset\n"
+    printf "  $lightBlue▪$reset$bold Stop server and database$reset                             $green[3]$reset\n"
+    printf "  $lightBlue▪$reset$bold Insert products into database$reset                        $green[4]$reset\n"
+    printf "  $lightBlue▪$reset$bold Exit$reset                                                 $green[0]$reset\n\n"
      
-    printf "$green  ?$reset Opção: $blue"
+    printf "$green  ?$reset Option: $blue"
     read option
     echo -ne $reset
 
