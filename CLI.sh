@@ -81,7 +81,7 @@ askAndSaveEnvVariable() {
   local key="$1"
   
   while true; do
-    printf "$green ? $reset$key: $blue"
+    printf "$green  ? $reset$key: $blue"
     read value
     echo -ne $reset
     
@@ -99,7 +99,7 @@ askAndSaveEnvVariable() {
 setupEnvVariables() {
   touch .env
 
-  echo -e "\n $purpleᐳ$reset I need you to define these$bold variables$reset:"
+  echo -e "\n  $purpleᐳ$reset I need you to define these$bold variables$reset:"
 
   askAndSaveEnvVariable DB_NAME
   askAndSaveEnvVariable DB_USER
@@ -111,6 +111,7 @@ setupEnvVariables() {
   echo "DB_PORT=3306" >> .env
   echo "PORT=3000" >> .env
   echo "DB_DIALECT=mysql" >> .env
+  echo ""
 
   loadEnv 
 }
