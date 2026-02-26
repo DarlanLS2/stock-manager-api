@@ -17,6 +17,8 @@
     "express": "^4.21.0",
     "jsonwebtoken": "^9.0.3",
     "mysql2": "^3.11.3",
+    "pg": "^8.19.0",
+    "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.4"
   },
   "jest": {
